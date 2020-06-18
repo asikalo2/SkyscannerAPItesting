@@ -1,0 +1,31 @@
+var jsonSchema = {
+   "type":"object",
+   "properties":{
+      "Places":{
+         "type":"array",
+         "items":{
+            "type":"object",
+            "properties":{
+               "PlaceId":{
+                  "type":"string"
+               },
+               "PlaceName":{
+                  "type":"string"
+               },
+               "CountryId":{
+                  "type":"string"
+               },
+               "RegionId":{
+                  "type":"string"
+               },
+               "CityId":{
+                  "type":"string"
+               },
+               "CountryName":{
+                  "type":"string"
+               }
+            }
+         }
+      }
+   }
+};
