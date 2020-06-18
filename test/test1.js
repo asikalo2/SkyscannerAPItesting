@@ -10,7 +10,8 @@ const schema = require('../api/schema.js');
 var validate = require('commonjs-utils/lib/json-schema').validate;
 
 let baseUrl = apiEndPointHelper.baseUrl;
-let apiEndPoint = apiEndPointHelper.superheroApiEndPoint;
+let apiEndPoint = apiEndPointHelper.getListApiEndPoint;
+let apiEndPointQuotes = apiEndPointHelper.getQuotesApiEndPoint;
 let jsonSchema = schema.jsonSchema;
 
 describe('Skyscanner API test', function () {
@@ -55,6 +56,30 @@ describe('Skyscanner API test', function () {
 	    let validation = validate(res.body, jsonSchema);
             //console.log(validation.valid);
             validation.valid.should.equal(true);
+        });
+    });
+
+    describe('Chaining API calls', function () {
+        it('Should get routes', async function () {
+            let queryString1 = "UK/GBP/en-GB/" + "?query=Stockholm"
+            let res1 = await apiUtils.sendGETRequest(baseUrl, apiEndPoint + queryString1);
+            let placesStockholm = res1.body.Places[0].PlaceId;
+            //console.log(placesStockholm);
+	    let queryString2 = "UK/GBP/en-GB/" + "?query=London"
+            let res2 = await apiUtils.sendGETRequest(baseUrl, apiEndPoint + queryString2);
+	    let placesLondon = res2.body.Places[0].PlaceId;
+	    //console.log(placesLondon);
+
+	    let queryString3 = "UK/GBP/en-GB/" + placesStockholm + "/" + placesLondon + "/" + "2020-09-01" + 
+						"?inboundpartialdate=2020-12-01"
+            let res3 = await apiUtils.sendGETRequest(baseUrl, apiEndPointQuotes + queryString3);
+	    //console.log(res3.body.Places);
+	    //res3.body.Quotes.length.should.greaterThan(0);
+	    let ids = [];
+            res3.body.Places.forEach(function(obj) { ids.push(obj.CityId) });
+	    //res3.body.Places.should.deepContain("Stockholm");
+	    ids.should.containEql("STOC");
+
         });
     });
     
